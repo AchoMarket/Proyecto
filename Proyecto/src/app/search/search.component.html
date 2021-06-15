@@ -1,0 +1,64 @@
+<section class="container-fluid m-0 p-0">
+    <app-error500 *ngIf="error" class="mt-0 p-0"></app-error500>
+    <article *ngIf="!error" class="product">
+        <div class="section-header pl-5 row w-100 mx-0">
+            <h1 class="col-12 col-lg-9">{{title}}</h1>
+            <form class="col-12 col-lg-3">
+                <div class="form-group row">
+                    <label class="col-4 col-form-label  w-100"for="orderAllProducts">Ordenar</label>
+                    <select #order class="col-6 col-md-4 col-lg-8 form-control w-100" 
+                    id="orderAllProducts" (change)="resultsOrder(order)">
+                        <option value="reciente">Más recientes</option>
+                        <option value="antiguo">Más antiguo</option>
+                        <option *ngIf="search.type == 'Producto'" value="mejor">Mejor valorados</option>
+                        <option *ngIf="search.type == 'Producto'" value="peor">Peor valorados</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        
+        <div class="row container-fluid mx-auto p-0">
+            <div *ngIf="search.type =='Producto'" class="col-12 col-lg-3 my-2 px-auto pb-4">
+               <app-search-sidebar [type]="search.type" [categoryId]="categoryId" (priceChangeEvent)="updatePriceFilter($event)"
+                (rateChangeEvent)="updateRateFilter($event)" (subcategoryChangeEvent)="updateSubcategoryFilter($event)"></app-search-sidebar>
+            </div>
+            <app-loading-screen *ngIf="loading && !error" class="col-12 col-lg-9"></app-loading-screen>
+            <ng-container *ngIf="!loading && results.length;else fail">
+                <div *ngIf="search.type == 'Producto'" class="search-results col-12 col-lg-9 row row-cols-2 row-cols-md-3 row-cols-lg-4 mx-auto px-auto"
+                    infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance"
+                    [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollDown()">
+                            <app-product-card  *ngFor="let result of results" [product]="result" class="my-1"></app-product-card>
+                
+                </div>
+                <div *ngIf="search.type == 'Tienda'" class="search-results col-12 col-lg-9 row row-cols-1 row-cols-lg-2 mx-auto px-auto"
+                    infinite-scroll
+                    [infiniteScrollDistance]="scrollDistance"
+                    [infiniteScrollThrottle]="throttle"
+                    (scrolled)="onScrollDown()">
+                    <app-shop-card *ngFor="let result of results " [shop]="result" class="my-1"></app-shop-card>
+                
+                </div>
+            </ng-container>
+        </div>
+        <ng-template #fail>
+            <div *ngIf="!loading" class="featured-product product col-12 col-lg-9 mt-0 pt-0">
+                <div class="card text-center mb-0 col-12 col-md-6 mx-auto my-3">
+                    <div class="card-body mt-4">
+                      <h2 class="card-title">La búsqueda introducida no ha arrojado ningún resultado.</h2>
+                      <p class="card-text mt-4">Puedes probar a visitar nuestras <a routerLink="/busqueda" [queryParams]="{filter: 'Tienda'}">tiendas </a></p>
+                      <p class="card-text">También puedes explorar todos los <a routerLink="/busqueda" [queryParams]="{filter: 'Producto'}">productos</a> de la web</p>
+                      <p class="card-text">Visita nuestras <a href="https://www.instagram.com/achomarket_oficial/">redes</a> para estar al día de las últimas noticias</p>
+                      <p class="card-text">Si tienes dudas puedes revisar nuestro <a routerLink="/faq">F.A.Q.</a> para obtener respuestas</p>
+                      <p class="card-text">Si crees que se trata de un error siempre puedes contactar con nosotros en <a routerLink="/informar">Informar de un error</a></p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h3>Desde Ach<img class="align-center" alt="Logo Minimalista de Acho Market" src="/assets/images/ach-yellow.png" width="5%"> Market le damos las gracias por su paciencia</h3>
+                </div> 
+            </div>
+        </ng-template>
+    </article>
+    <br><br>
+</section>

@@ -1,0 +1,81 @@
+<app-error500 *ngIf="contentLoaded < 0"></app-error500>
+
+<section class="container-fluid m-0 p-0">
+    <div *ngIf="user" class="alert alert-success" role="alert">¡Bienvenide {{user}}!</div>
+    <article class="text-center my-5">
+        <h1 class="display-1">Ach<img src="/assets/images/ach-yellow.png" width="70em"> Market</h1>
+        <h2>Explora el Marketplace de la Región de Murcia.</h2>
+        <h5>Descubre las tiendas de la región y sus productos en un click.</h5>
+    </article>
+    <article *ngIf="contentLoaded > 0" class="featured-product product">
+        <div class="section-header pl-5">
+            <h1>Nuevas Tiendas</h1>
+        </div>
+        <div class="container-fluid">
+            <div id="newShops" class="carousel slide row" data-ride="carousel">
+                <div class="col-1 align-self-center">
+                    <div class=" row justify-content-center">
+                        <a href="#newShops" role="button" data-slide="prev">
+                            <i class="bi bi-chevron-left carousel-controller"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-10">
+                    <div class="carousel-inner" role="listbox">
+                        <ng-container *ngFor="let shop of latestShops; let firstShop=first">
+                            <div class="carousel-item" [ngClass]="{ 'active' : firstShop }">
+                                <div class="row align-items-center m-0 p-0">
+                                    <div class="col-12 col-md-8">
+                                        <h2>{{shop.name}}</h2>
+                                        <p>{{shop.description | slice:0:150}}...</p>
+                                        <a class="btn btn-primary mb-4 my-0" routerLink="/tienda/{{shop.id}}">Visitar</a>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <a routerLink="/tienda/{{shop.id}}">
+                                            <img *ngIf="shop.image" class="d-block img-fluid img-thumbnail w-100" [src]="shop.image" alt="Imagen de {{shop.name}} image">
+                                            <img *ngIf="!shop.image" class="d-block img-fluid img-thumbnail w-100" src="/assets/images/img-error2.png" alt="Imagen de {{shop.name}} image">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="col-1 align-self-center ">
+                    <div class=" row justify-content-center">
+                        <a href="#newShops" role="button" data-slide="next">
+                            <i class="bi bi-chevron-right carousel-controller"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <article *ngIf="contentLoaded > 1" class="featured-product product">
+
+        <div class="section-header pl-5">
+            <h1>Nuestra Selección de productos</h1>
+        </div>
+        <div class="container-fluid">
+            <app-carousel-of-items [group]="latest" [carouselId]="'featured'"></app-carousel-of-items>
+        </div>  
+    </article>
+    <article *ngIf="contentLoaded > 1" class="featured-product product">
+
+        <div class="section-header pl-5">
+            <h1>Nuevos Productos</h1>
+        </div>
+        <div class="container-fluid">
+            <app-carousel-of-items [group]="latest" [carouselId]="'newProducts'"></app-carousel-of-items>
+        </div>
+    </article>
+    <article *ngIf="contentLoaded > 1" class="featured-product product">
+            <div class="section-header pl-5">
+                <h1>Productos Mejor Valorados</h1>
+            </div>
+            <div class="container-fluid">
+                <app-carousel-of-items [group]="best" [carouselId]="'best'"></app-carousel-of-items>
+            </div>
+    </article>
+</section>
+<app-loading-screen *ngIf="contentLoaded == 0 || contentLoaded == 1"></app-loading-screen>

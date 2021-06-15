@@ -1,0 +1,190 @@
+<section class="container-fluid m-0 p-0">
+    <div class="featured-product product  container-fluid mt-0 pt-0">
+        <div class="section-header row align-items-end pl-5 w-100 mx-0">
+            <div class="col-3 col-sm-2 col-lg-1 p-0">
+                <img *ngIf="user" class="float-right shop-icon rounded-circle w-100 col-12 col-lg-11" [src]="user.profile_img" title="{{user.name}} profile picture" alt="{{user.name}} profile picture">
+            </div>
+            <div class="col-9 col-sm-10 col-lg-11"><h2 class="row ">&nbsp;Mi cuenta</h2></div>
+        </div>
+    </div>
+    <!-- My Account Start -->
+    <div class="my-account pb-5 container-xl">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="nav  card flex-column nav-pills p-0 m-0" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="account-nav" data-toggle="pill" href="#account-tab" role="tab"><i class="bi bi-person-fill"></i>Detalles de cuenta</a>
+                    <a class="nav-link" id="security-nav" data-toggle="pill" href="#security-tab" role="tab"><i class="bi bi-shield-lock-fill"></i>Cambiar contraseña</a>
+                    <a class="nav-link" id="cart-nav" data-toggle="pill" href="#cart-tab" role="tab"><i class="bi bi-cart-fill"></i>Carrito</a>
+                    <a class="nav-link" id="orders-nav" data-toggle="pill" href="#orders-tab" role="tab"><i class="bi bi-cart-check-fill"></i>Pedidos activos</a>
+                    <a class="nav-link" id="history-nav" data-toggle="pill" href="#history-tab" role="tab"><i class="bi bi-clock-history"></i>Historial de compras</a>
+                    <a class="nav-link" id="wish-nav" data-toggle="pill" href="#wish-tab" role="tab"><i class="bi bi-bookmark-heart-fill"></i>Lista de deseos</a>
+                    <a class="nav-link" id="payment-nav" data-toggle="pill" href="#payment-tab" role="tab"><i class="bi bi-credit-card-fill"></i>Método de pago</a>
+                    <a class="nav-link" routerLink="/logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i>Cerrar sesión</a>
+                </div>
+            </div>
+            <div class="col-md-8"> 
+                <div class="tab-content card">
+                    <div class="tab-pane fade show active" id="account-tab" role="tabpanel" aria-labelledby="account-nav">
+                        <h4>Detalles de cuenta</h4>
+                        <form class="row needs-validation" (ngSubmit)="onSubmitUserData()" #form="ngForm" [formGroup]="detailsForm" novalidate> 
+                            <div *ngIf="dataChanged" class="alert alert-success alert-dismissible fade show col-md-12" role="alert">
+                                ¡Datos actualizados con éxito!
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div *ngIf="dataNotChanged" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                No se han podido guardar los cambios, si el problema persiste <a routerLink="/informar">contacta con nosotros</a>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="name">Nombre</label>
+                                <input class="form-control" name="name" id="name" formControlName="name" type="text" required>
+                                <div class="invalid-feedback mb-2" *ngIf="detailsForm.get('name').hasError('required')">
+                                    Error, no has introducido tu nombre
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="tlf">Teléfono</label>
+                                <input class="form-control" name="tlf" pattern="^[9|8|7|6]\d{8}$" id="tlf" formControlName="tlf" type="text" required>
+                                <div class="invalid-feedback mb-2" *ngIf="detailsForm.get('tlf').hasError('required'); else telBad">
+                                    Error, no has introducido el teléfono
+                                  </div>
+                                  <ng-template #telBad>
+                                    <div class="invalid-feedback mb-2" *ngIf="detailsForm.get('tlf').hasError('pattern'); else telGood">
+                                      El teléfono debe tener 9 caracteres y empezar por 9, 8, 7, o 6
+                                    </div>
+                                  </ng-template>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="email">Email</label>
+                                <input class="form-control" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" id="email" formControlName="email" type="email" required>
+                                <div class="invalid-feedback mb-2" *ngIf="detailsForm.get('email').hasError('required'); else emailBad">
+                                    Error, no has introducido el email
+                                </div>
+                                  <ng-template #emailBad>
+                                    <div class="invalid-feedback mb-2" *ngIf="detailsForm.get('email').hasError('pattern');">
+                                      Error, no has introducido el email correctamente
+                                    </div>
+                                  </ng-template>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="address">Dirección</label>
+                                <input class="form-control" name="address" id="address" formControlName="address" type="text" required>
+                                <div class="invalid-feedback mb-2" *ngIf="detailsForm.get('address').hasError('required')">
+                                    Error, no has introducido tu dirección
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="image">Cambia tu imagen de perfil</label>
+                                <input type="file" class="form-control-file" id="image" name="image" formControlName="image" (change)="fileChangeEvent($event)">
+                                <image-cropper *ngIf="editDetails"
+                                    [imageChangedEvent]="imageChangedEvent"
+                                    [maintainAspectRatio]="true"
+                                    [aspectRatio]="1 / 1"
+                                    format="png"
+                                    (imageCropped)="imageCropped($event)"
+                                ></image-cropper>
+                            </div>
+                            <div class="col-md-12">
+                                <br *ngIf="!editDetails">
+                                <button type="button" class="btn mr-2" [ngClass]="[editDetails ? 'btn-danger' : 'btn-primary']" (click)="edit()">
+                                    <span *ngIf="editDetails">Cancelar</span>
+                                    <span *ngIf="!editDetails">Editar</span>
+                                </button>
+                                <input *ngIf="editDetails" type="submit" class="btn btn-success" value="Actualizar">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="security-tab" role="tabpanel" aria-labelledby="account-nav">
+                       <app-form-update-password [admin]=false></app-form-update-password>
+                    </div>
+                    <div class="tab-pane fade p-0 m-0" id="cart-tab" role="tabpanel" aria-labelledby="cart-nav">
+                        <app-cart class="p-0 m-0"></app-cart>
+                    </div>    
+                    <div class="tab-pane fade" id="orders-tab" role="tabpanel" aria-labelledby="orders-nav">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Producto</th>
+                                        <th>Fecha</th>
+                                        <th>Precio</th>
+                                        <th>Estado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Producto Nombre</td>
+                                        <td>01 Jan 2020</td>
+                                        <td>$99</td>
+                                        <td>En camino</td>
+                                        <td><button class="btn">Ver</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="history-tab" role="tabpanel" aria-labelledby="orders-nav">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Producto</th>
+                                        <th>Fecha</th>
+                                        <th>Precio</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Producto Comprado</td>
+                                        <td>01 Jan 2020</td>
+                                        <td>$99</td>
+                                        <td><button class="btn">Ver</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="wish-tab" role="tabpanel" aria-labelledby="orders-nav">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Producto Deseado</td>
+                                        <td>$99</td>
+                                        <td><button class="btn">Ver</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="payment-tab" role="tabpanel" aria-labelledby="payment-nav">
+                        <h4>Método de pago</h4>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum quam ac mi viverra dictum. In efficitur ipsum diam, at dignissim lorem tempor in. Vivamus tempor hendrerit finibus. Nulla tristique viverra nisl, sit amet bibendum ante suscipit non. Praesent in faucibus tellus, sed gravida lacus. Vivamus eu diam eros. Aliquam et sapien eget arcu rhoncus scelerisque.
+                        </p> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>    
+  

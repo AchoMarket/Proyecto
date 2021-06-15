@@ -1,0 +1,122 @@
+<app-loading-screen *ngIf="loading"></app-loading-screen>
+<app-error404 *ngIf="!loading && !product && !categorization && !shop"></app-error404>
+<ng-container *ngIf="product && categorization && shop">
+    <ng-container *ngIf="show">
+        <app-photo-gallery *ngIf="images" (control)="toggleGallery($event)" [images]="images"></app-photo-gallery>
+    </ng-container>
+    <section class="container-fluid m-0 p-0">
+        <div class="product">
+        <div class="section-header container-fluid pl-5 d-flex justify-content-start flex-wrap">
+            <h1 class="m-0 p-0">{{product.name}}</h1>
+            <h3 class="row align-items-center m-0 p-0">
+                <div class="col-2 col-lg-1  m-0 p-0">
+                    <a *ngIf="!shop.image" routerLink="/tienda/{{shop.id}}"><img class="float-right shop-icon rounded-circle w-50" src="/assets/images/ach-yellow.png" title="{{shop.name}}" alt="{{shop.name}} profile photo"></a>
+                    <a *ngIf="shop.image" routerLink="/tienda/{{shop.id}}"><img class="float-right shop-icon rounded-circle w-50" [src]="shop.image" title="{{shop.name}}" alt="{{shop.name}} profile photo"></a>
+                </div>
+                <span class="col-10 col-lg-11 m-0 p-0">&nbsp;<a routerLink="/tienda/{{shop.id}}">{{shop.name}}</a></span>
+            </h3>
+        </div>
+        </div>
+        <div class="row container-xl mx-auto" >
+            <div class="col-12 col-md-6">
+                <div class="row">
+                    <div class="col-12 col-lg-11  m-0 p-0">
+                        <div class="row" style="margin:0; padding:10px;">
+                            <img *ngIf="images[0]" [src]="images[0]" class="m-0 p-0 w-100 clickable" (click) = toggleGallery(true)>
+                            <img *ngIf="!images[0]" src="assets/images/img-error2.png" class="m-0 p-0 w-100">
+                        </div>
+                        <div class="row m-0 p-0" >
+                            <div class="col-4" style="margin:0; padding:10px;" >
+                                <img *ngIf="images[1]" [src]="images[1]" class="w-100 m-0 p-0 clickable" (click) = toggleGallery(true)>
+                            </div>
+                            <div class="col-4" style="margin:0; padding:10px;" >
+                                <img *ngIf="images[2]" [src]="images[2]" class="w-100 m-0 p-0 clickable" (click) = toggleGallery(true)>
+                            </div>
+                            <div class="col-4" style="margin:0; padding:10px;" >
+                                <img *ngIf="images[3]" [src]="images[3]" class="w-100 m-0 p-0 clickable" (click) = toggleGallery(true)>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-1  m-0 p-0">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="row">
+                    <div class="col-12 col-1-lg  m-0 p-0">
+                    </div>
+                    <div class="col-12 col-11-lg" style="margin:0;padding:10px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="h3">{{product.price | currency: " "}}€</span>
+                            </div>
+                            <h2 class="col-6">
+                                <button type="button" class="btn w-100" [ngClass]="[customer ? 'btn-primary' : 'btn-secondary']" (click)="addToCart()">
+                                    Añadir al carrito <i class="bi bi-cart-plus"></i>
+                                </button>
+                            </h2>
+                        </div>
+                        <h3 *ngIf="product.media_rating && product.media_rating !=0">{{product.media_rating}}
+                            <span>
+                                <app-rating *ngIf="product.media_rating" [rating]="product.media_rating"></app-rating>
+                            </span>  
+                        </h3>
+                        <h3>Descripción del producto</h3>
+                        <div [innerHTML]="product.description"></div>
+                        <br>
+                        <p>Categoría: {{categorization.category_name}}</p>
+                        <p>Subcategoría: {{categorization.subcategory_name}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="container row my-0 mx-auto">
+            <div class="col-12 col-md-8 my-0 mx-auto">
+                <div *ngIf="(reviews.length && !customer) || customer " class="card border-radius-0">
+                    <div class="card-header">
+                        <h2>Comentarios</h2>
+                    </div>
+                    <div *ngIf="customer" class="card-body">
+                        <app-form-review [product_id]="product.id" (newReview)="addReview($event)"></app-form-review>
+                    </div>
+                    <div class="card-header border-top">
+                        <div class="row">
+                                <h5 class="col-12 col-md-6">Otros usuarios opinan:</h5>
+                                <form class="col-12 col-md-6">
+                                    <div class="form-group row m-0 p-0">
+                                        <label for="orderByComment" class="col-form-label mx-2">Ordenar</label>
+                                        <div class="col w-100 p-0 m-0">
+                                            <select  #order class="form-control" 
+                                                id="orderReviews" (change)="orderReviews(order)">
+                                                <option value="reciente">Más recientes</option>
+                                                <option value="antiguo">Más antiguos</option>
+                                                <option value="mejor">Mejor valorados</option>
+                                                <option value="peor">Peor valorados</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                        </div>
+                    </div>
+                    <!-- <div class="card-body m-0 p-0">
+                        <app-comment-card *ngFor="let review of reviews" [review]="review"></app-comment-card>
+                    </div> -->
+                    <div class="card-body m-0 p-0"
+                        infinite-scroll
+                        [infiniteScrollDistance]="scrollDistance"
+                        [infiniteScrollThrottle]="throttle"
+                        (scrolled)="onScrollDown()">
+                        <app-review-card *ngFor="let review of reviews" [review]="review"></app-review-card>
+                    </div>
+                    <div *ngIf="!reviews.length">
+                        <div class="alert alert-info m-3" role="alert">
+                            Nadie ha valorado aún sobre este producto, ¿Lo has probado? Sé el primero en valorarlo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </section>
+</ng-container>
