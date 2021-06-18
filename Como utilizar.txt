@@ -1,3 +1,7 @@
-Para que funcione el proyecto de Angular hay que introducir primero el comando npm install --save-dev @angular-devkit/build-angular.
-Seguidamente hay que realizar el comando npm audit fix.
-Para que funcione el proyecto de Laravel hay que introducir primero la carpeta vendor(creando un proyecto de laravel y el archivo .env).
+Para que funcione el proyecto de Angular hay que introducir primero el comando "npm install --save-dev @angular-devkit/build-angular".
+Seguidamente hay que realizar el comando "npm audit fix".
+Finalmente para ejecutar el proyecto de Angular hay realizar el comando "ng serve -o".
+Para que funcione el proyecto de Laravel hay que introducir primero la carpeta vendor(creando un proyecto de laravel) y cambiar el nombre
+del fichero .env-ejemplo por .env. A continuación hay que realizar el comando "composer require laravel/sanctum". Después hay que realizar el comando
+php artisan migrate:fresh --seed con Apache y Mysql encendido en Xampp y con una base de datos creada que se llame "marketplace".
+Finalmente para ejecutar el proyecto de laravel hay que realizar el comando "php artisan serve".
